@@ -48,6 +48,9 @@ namespace SalesAndMarketingForms
                         if (Int32.TryParse(worksheet.Cells["B1"].Text, out int j))
                             planId = j;
 
+                        //get the plan name
+                        var mergedId = worksheet.MergedCells[0];
+                        string planName = worksheet.Cells[mergedId].First().Value.ToString();
 
                         //Get data from the XLSX sheet
                         //var dt = XlsDataExtractor.GetDataTableFromExcel(worksheet,1,2,10,13,4 , rowCount);
@@ -56,14 +59,14 @@ namespace SalesAndMarketingForms
 
                         datCols.Add(new Tuple<int, int>(10, 13));
                         datCols.Add(new Tuple<int, int>(15, 15));
-                        datCols.Add(new Tuple<int, int>(21, 21));
-                        datCols.Add(new Tuple<int, int>(24, 24));
+                        datCols.Add(new Tuple<int, int>(21, 22));
+                        datCols.Add(new Tuple<int, int>(25, 25));
 
 
                         var dt = XlsDataExtractor.GetDataTableFromExcel(worksheet, 1, 2, datCols, 4, rowCount);
 
                         //Update DB plan with the data
-                        var dbUpdate = UpdateDBJDPlan(planId, dt);
+                        var dbUpdate = UpdateDBJDPlan(planId,planName ,dt);
 
                         Label1.Text = String.Format("Plan {0} was updated suuccessfully. {1} rows updated", planId, dbUpdate.Item1);
 
@@ -78,7 +81,7 @@ namespace SalesAndMarketingForms
         }
 
 
-        private Tuple<int,  string> UpdateDBJDPlan(int planId, DataTable dt)
+        private Tuple<int,  string> UpdateDBJDPlan(int planId, string planName,  DataTable dt)
         {
             try
             {
@@ -89,6 +92,7 @@ namespace SalesAndMarketingForms
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@PlanId", planId));
+                        cmd.Parameters.Add(new SqlParameter("@PlanName", planName));
                         cmd.Parameters.Add(new SqlParameter("@JD_Data", dt));
                         cmd.Parameters.Add(new SqlParameter("@User", System.Web.HttpContext.Current.User.Identity.Name));
                         
