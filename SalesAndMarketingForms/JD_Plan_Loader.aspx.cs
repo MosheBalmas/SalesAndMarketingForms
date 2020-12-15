@@ -57,18 +57,23 @@ namespace SalesAndMarketingForms
 
                         var datCols = new List<Tuple<int, int>>();
 
-                        datCols.Add(new Tuple<int, int>(10, 13));
-                        datCols.Add(new Tuple<int, int>(15, 15));
-                        datCols.Add(new Tuple<int, int>(21, 22));
-                        datCols.Add(new Tuple<int, int>(25, 25));
+                        datCols.Add(new Tuple<int, int>(9, 12));
+                        datCols.Add(new Tuple<int, int>(14, 14));
+                        datCols.Add(new Tuple<int, int>(20, 21));
+                        datCols.Add(new Tuple<int, int>(24, 24));
 
 
-                        var dt = XlsDataExtractor.GetDataTableFromExcel(worksheet, 1, 2, datCols, 4, rowCount);
+                        var dt = XlsDataExtractor.GetDataTableFromExcel(worksheet, 1, 1, datCols, 5, rowCount);
 
                         //Update DB plan with the data
                         var dbUpdate = UpdateDBJDPlan(planId,planName ,dt);
 
-                        Label1.Text = String.Format("Plan {0} was updated suuccessfully. {1} rows updated", planId, dbUpdate.Item1);
+
+                        if (dbUpdate.Item1>0)
+                            Label1.Text = String.Format("Plan {0} was updated suuccessfully. {1} rows updated", planId, dbUpdate.Item1);
+                        else
+                            Label1.Text = String.Format("Plan {0} upload failed. Reason: {1}", planId, dbUpdate.Item2);
+
 
                     }
 
